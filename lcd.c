@@ -17,9 +17,11 @@ extern "C"{
 void LCD_busy(void){
     lcd_DDR &= 0x0F;//set data als ingang
     lcd_port = LCD_EN|LCD_RW;
+    asm ("nop");/* plaats in commend als er data verwerkt word ipv wachten */
     asm ("nop");
-    asm ("nop");
-    //wacht op 0b0xxx xxxx
+    /* wacht op 0b0xxx xxxx
+     * men kan iets verwerken ondertussen
+     * */
     do {} while ((lcd_pin&0x80));
     lcd_port =0x00;
     lcd_DDR |= 0xf0;//set data als uitgang
