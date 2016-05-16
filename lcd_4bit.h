@@ -2,8 +2,8 @@
  * Author:   De Backer Simon
  * info:     4-bit
  * */
-#ifndef _lcd_h__
-#define _lcd_h__
+#ifndef _lcd_4bit_h__
+#define _lcd_4bit_h__
 
 #ifdef __cplusplus
 extern "C"{
@@ -14,33 +14,40 @@ extern "C"{
 #include <avr/io.h>
 #ifdef F_CPU
 #include <util/delay.h>
+#else
+#error no F_CPU include lcd_4bit.h
 #endif
 #include <stdlib.h>
 
-#define LCD_4x20   //LCD_4x20 or LCD_2x20_16
+#define LCD_rows    4   /*LCD_row 1, 2, 3 or 4 */
 
-#define lcd_pin   PINA //LCD connected to PORTB as shown above
-#define lcd_DDR   DDRA //LCD connected to PORTB as shown above
-#define lcd_port   PORTA //LCD connected to PORTB as shown above
-//LCD_RS 0 command / 1 write data
+#define lcd_pin     PINA
+#define lcd_DDR     DDRA
+#define lcd_port    PORTA
+
+/* LCD_RS 0 command / 1 write data */
 #define LCD_RS     0x01 //pin 0
-//LCD_RW lees 1 / Write 0
+
+/* LCD_RW lees 1 / Write 0 */
 #define LCD_RW     0x02 //pin 1
+
+/* LCD_EN Starts data read/write. */
 #define LCD_EN     0x04 //pin 2
-#define Execution_time_clear_display     2 //is in ms
-#define Execution_time_cmd     100 //is in µs
+
+#define Execution_time_cmd     500 //is in µs
 
 void LCD_busy(void);
+uint8_t LCD_is_not_busy(void);/* te testen */
 void lcd_cmd (char cmd);
 void lcd_reset(void);
 void lcd_init (void);
 // Function to display single Character
 void lcd_data (unsigned char dat);
 // Function to display a String
-void lcd_puts(char *a);//ok
+void lcd_puts(char *a);
 void lcd_value_int(uint8_t var);
-void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col);//ok
-void lcd_clear();//ok
+void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col);
+void lcd_clear();
 //Input:
 //     location: location where you want to store
 //               0,1,2,....7
@@ -51,7 +58,7 @@ void lcd_clear();//ok
 //     LCD_build(1,pattern);
 //
 //LCD Ports are same as discussed in previous sections
-void LCD_build(unsigned char location, unsigned char *ptr);// ok
+void LCD_build(unsigned char location, unsigned char *ptr);
 
 #ifdef __cplusplus
 } // extern "C"

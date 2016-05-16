@@ -2,14 +2,14 @@
  * Author:   De Backer Simon
  * info:     4-bit
  * */
-#ifndef _lcd_c__
-#define _lcd_c__
+#ifndef _lcd_4bit_c__
+#define _lcd_4bit_c__
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-#include <lcd.h>
+#include <lcd_4bit.h>
 
 /*read busy flag
  * is blijkbaar 26µs-33µs vareert
@@ -25,6 +25,24 @@ void LCD_busy(void){
     do {} while ((lcd_pin&0x80));
     lcd_port =0x00;
     lcd_DDR |= 0xf0;//set data als uitgang
+}
+uint8_t LCD_is_not_busy(void)
+{
+    lcd_DDR &= 0x0F;//set data als ingang
+    lcd_port = LCD_EN|LCD_RW;
+    asm ("nop");
+    asm ("nop");
+    if(lcd_pin&0x80)
+    {
+        lcd_port =0x00;
+        lcd_DDR |= 0xf0;//set data als uitgang
+
+        return 0;/* busy */
+    }
+    lcd_port =0x00;
+    lcd_DDR |= 0xf0;//set data als uitgang
+
+    return 1;/* not busy */
 }
 
 void lcd_cmd (char cmd)
@@ -96,14 +114,16 @@ void lcd_value_int(uint8_t var)
 
 void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col)
 {
-#ifdef LCD_4x20
+#if(LCD_rows==4)
     static uint8_t LCD_row_offsets[4]= { 0x00, 0x40, 0x14, 0x54 };
-#else
-#ifdef LCD_2x20_16
+#elif(LCD_rows==3)
+    static uint8_t LCD_row_offsets[3]= { 0x00, 0x40, 0x14 };
+#elif(LCD_rows==2)
     static uint8_t LCD_row_offsets[2]= { 0x00, 0x40 };
+#elif(LCD_rows==1)
+    static uint8_t LCD_row_offsets[1]= { 0x00 };
 #else
-#error no LCD_ defane
-#endif
+#error no LCD_rows define
 #endif
     lcd_cmd(0x80 | (LCD_col + LCD_row_offsets[LCD_row]));
 }
