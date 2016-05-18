@@ -96,14 +96,15 @@ void lcd_data (unsigned char dat)
     lcd_port = ((dat & 0xF0)|LCD_RS);
     lcd_port = (((dat << 4) & 0xF0)|LCD_EN|LCD_RS);
     lcd_port = (((dat << 4) & 0xF0)|LCD_RS);
-    LCD_busy();
 }
 // Function to display a String
 void lcd_puts(char *a)
 {
     unsigned int i;
-    for(i=0;a[i]!=0;i++)
+    for(i=0;a[i]!=0;i++){
         lcd_data(a[i]);
+        LCD_busy();
+    }
 }
 void lcd_value_int(uint8_t var)
 {
@@ -129,8 +130,13 @@ void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col)
 }
 void lcd_clear()
 {
-    lcd_cmd(0x01); // Clear screen
+    lcd_cmd(0x01); /* Clear screen */
 }
+void lcd_Return_home()
+{
+    lcd_cmd(0x02);
+}
+
 /* Input:
  *     location: location where you want to store
  *               0,1,2,....7

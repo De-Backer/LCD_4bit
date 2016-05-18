@@ -47,7 +47,8 @@ void lcd_data (unsigned char dat);
 void lcd_puts(char *a);
 void lcd_value_int(uint8_t var);
 void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col);
-void lcd_clear();
+void lcd_clear(); /* Clear screen */
+void lcd_Return_home();/* Return home */
 //Input:
 //     location: location where you want to store
 //               0,1,2,....7
