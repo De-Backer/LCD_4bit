@@ -113,8 +113,19 @@ void lcd_value_int(uint8_t var)
     lcd_puts(temp);
 }
 
-void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col)
+void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col) /* set DDRAM address */
 {
+    /* LCD 4*20
+     *  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19
+     *
+     * 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12 13
+     * 40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 52 53
+     * 14 15 16 17 18 19 2A 2B 2C 2D 2E 2F 30 31 32 33 34 35 36 37
+     * 54 55 56 57 58 59 5A 5B 5C 5D 5E 5F 60 61 62 63 64 65 66 67
+     *
+     * 1 ADD ADD ADD ADD ADD ADD ADD
+     *
+*/
 #if(LCD_rows==4)
     static uint8_t LCD_row_offsets[4]= { 0x00, 0x40, 0x14, 0x54 };
 #elif(LCD_rows==3)
@@ -135,6 +146,22 @@ void lcd_clear()
 void lcd_Return_home()
 {
     lcd_cmd(0x02);
+}
+void lcd_shift_display(uint8_t mode)/* Entry mode set */
+{
+    /* 0000 01 i/d S
+     * i/d 1=increment 0=Decrement
+     * S   1=Accompanies display shift
+     *
+     * EX: 0000 0110
+     *     1=increment shift the cursor to the right
+     *     0=no display shift
+     */
+    lcd_port = ((mode & 0xF0)|LCD_EN|LCD_RS);
+    lcd_port = ((mode & 0xF0)|LCD_RS);
+    lcd_port = (((mode << 4) & 0xF0)|LCD_EN|LCD_RS);
+    lcd_port = (((mode << 4) & 0xF0)|LCD_RS);
+    LCD_busy();
 }
 
 /* Input:

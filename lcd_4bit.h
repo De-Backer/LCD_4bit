@@ -36,6 +36,12 @@ extern "C"{
 
 #define Execution_time_cmd     500 //is in µs
 
+/* TBA: Entry mode set */
+#define LCD_left         0x04
+#define LCD_left_diplay  0x05
+#define LCD_right        0x06
+#define LCD_right_diplay 0x07
+
 void LCD_busy(void);
 uint8_t LCD_is_not_busy(void);/* te testen */
 void lcd_cmd (char cmd);
@@ -46,9 +52,10 @@ void lcd_data (unsigned char dat);
 // Function to display a String
 void lcd_puts(char *a);
 void lcd_value_int(uint8_t var);
-void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col);
+void lcd_setCursor(uint8_t LCD_row,uint8_t LCD_col);/* set DDRAM address */
 void lcd_clear(); /* Clear screen */
 void lcd_Return_home();/* Return home */
+void lcd_shift_display(uint8_t mode);/* TBA: Entry mode set */
 //Input:
 //     location: location where you want to store
 //               0,1,2,....7
