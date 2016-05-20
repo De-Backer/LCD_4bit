@@ -85,12 +85,14 @@ void lcd_init (void)
 
     // 4-bit mode – 2 line – 5×7 font.
     lcd_cmd(0x0C);       // Display no cursor – no blink.
-    lcd_cmd(0x06);       // Automatic Increment – No Display shift.
-    lcd_cmd(0x80);       // Address DDRAM with 0 offset 80h.
+    lcd_shift_display(LCD_right);
+    //lcd_cmd(0x06);       // Automatic Increment – No Display shift.
+    lcd_setCursor(0,0);
+    //lcd_cmd(0x80);       // Address DDRAM with 0 offset 80h.
 }
 
 // Function to display single Character
-void lcd_data (unsigned char dat)
+void lcd_data (unsigned char dat)/* Wriite data to CGRAM or DDRAM */
 {
     lcd_port = ((dat & 0xF0)|LCD_EN|LCD_RS);
     lcd_port = ((dat & 0xF0)|LCD_RS);
@@ -157,10 +159,10 @@ void lcd_shift_display(uint8_t mode)/* Entry mode set */
      *     1=increment shift the cursor to the right
      *     0=no display shift
      */
-    lcd_port = ((mode & 0xF0)|LCD_EN|LCD_RS);
-    lcd_port = ((mode & 0xF0)|LCD_RS);
-    lcd_port = (((mode << 4) & 0xF0)|LCD_EN|LCD_RS);
-    lcd_port = (((mode << 4) & 0xF0)|LCD_RS);
+    lcd_port = (mode & 0xF0)|LCD_EN;
+    lcd_port = (mode & 0xF0);
+    lcd_port = ((mode << 4) & 0xF0)|LCD_EN;
+    lcd_port = ((mode << 4) & 0xF0);
     LCD_busy();
 }
 
