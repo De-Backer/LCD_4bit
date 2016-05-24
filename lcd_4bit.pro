@@ -12,3 +12,5 @@ SOURCES = lcd_4bit.c
 # Add any library paths needed to build your project
 
 INCLUDEPATH =/opt/cross/avr/avr/include/
+
+DISTFILES += README.md
